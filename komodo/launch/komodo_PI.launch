@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<launch>
+
+    <include file="$(find tal)/launch/komodo.launch" ns="komodo"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find tal)/map/map_108.yaml" />
+
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 world /map 100" />
+
+  <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" args="0 0 0 0 0 0 /map /komodo/mobile_base_controller/odom 20" />
+
+  <node name="MCL1" pkg="MCL_PI" type="MCL_PI.py" output="screen">
+  <remap from="/cmd_vel" to="/komodo/mobile_base_controller/cmd_vel"/>
+  <remap from="/odom" to="/komodo/mobile_base_controller/odom"/>
+  <remap from="/scan" to="/komodo/scan"/>
+  <remap from="/particlecloud" to="/komodo/particlecloud"/>
+  <remap from="/estimated_pose" to="/komodo/estimated_pose"/>
+  <remap from="/initialpose" to="/komodo/initialpose"/>
+  <remap from="/transformed_particles" to="/komodo/transformed_particles"/>
+  <remap from="/komodo/static_map" to="/static_map"/>
+  <remap from="/particlecloud2fuse_out" to="/komodo/particlecloud2fuse_out"/>
+  <remap from="/particlecloud2fuse_in" to="/armadillo/particlecloud2fuse_out"/>
+  <remap from="/other_robot_observation" to="/komodo/other_robot_observation"/>
+  <remap from="/scope" to="/komodo/scope"/>
+  </node>
+
+ 
+</launch>

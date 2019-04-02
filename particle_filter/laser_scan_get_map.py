@@ -42,6 +42,9 @@ class MapClientLaserScanSubscriber(object):
         x = np.multiply(self.z.ranges, np.cos(angle)) + mu_x
         y = np.multiply(self.z.ranges, np.sin(angle)) + mu_y
 
+        x[~np.isfinite(x)] = -1
+        y[~np.isfinite(y)] = -1
+
         x = x / map_info.resolution
         #x_r = np.abs(x_r)
         #x = x.astype (int)

@@ -10,7 +10,7 @@ from geometry_msgs.msg import PoseArray
 from laser_scan_get_map import MapClientLaserScanSubscriber  
 import tf_conversions
 from matplotlib import pyplot as plt
-from skimage.draw import line
+#from skimage.draw import line
 from sklearn.neighbors import NearestNeighbors as KNN
 from scipy.stats import multivariate_normal
 from matplotlib.mlab import bivariate_normal
