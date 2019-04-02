@@ -8,7 +8,7 @@
         <include file="$(find armadillo1_hw)/launch/armadillo1_hw.launch" />
         
          <!-- Load joint controller configurations from YAML file to parameter server -->
-  <rosparam file="$(find armadillo1_control)/config/armadillo1_control.yaml" command="load"/>
+  <rosparam file="$(find MCL_PI)/armadillo/config/armadillo1_control.yaml" command="load"/>
 
   <!-- load the controllers -->
   <node name="controller_spawner"
