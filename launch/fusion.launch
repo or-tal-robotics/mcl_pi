@@ -23,7 +23,7 @@
 <!-- push description to factory and spawn robot in gazebo, part of gazebo basice pkg -->
   <node name="spawn_robot_1" pkg="gazebo_ros" type="spawn_model" args=" -x 6 -y -1.5 -Y 3.14  -unpause -urdf -model simple_model1 -param /robot_description" respawn="false" output="screen" />
 
-  <node name="MCL1" pkg="slam_mcmc" type="sensor_fusion.py" output="screen">
+  <node name="MCL1" pkg="MCL_PI" type="MCL_PI.py" output="screen">
   <remap from="/cmd_vel" to="/robot1/cmd_vel"/>
   <remap from="/odom" to="/robot1/odom"/>
   <remap from="/particlecloud" to="/robot1/particlecloud"/>
@@ -55,7 +55,7 @@
 <!-- push description to factory and spawn robot in gazebo, part of gazebo basice pkg -->
   <node name="spawn_robot_2" pkg="gazebo_ros" type="spawn_model" args=" -x 0 -y -1.5 -Y 0  -unpause -urdf -model simple_model2 -param /robot_description" respawn="false" output="screen" />
 
-  <node name= "MCL2" pkg="slam_mcmc" type="sensor_fusion.py" output="screen">
+  <node name= "MCL2" pkg="MCL_PI" type="MCL_PI.py" output="screen">
   <remap from="/cmd_vel" to="/robot2/cmd_vel"/>
   <remap from="/odom" to="/robot2/odom"/>
   <remap from="/particlecloud" to="/robot2/particlecloud"/>
@@ -78,8 +78,8 @@
 
 
  <arg name="rviz"    default="true" />
-  <arg name="rviz_file1" default="$(find slam_mcmc)/rviz/robot1.rviz" />
-  <arg name="rviz_file2" default="$(find slam_mcmc)/rviz/robot2.rviz" />
+  <arg name="rviz_file1" default="$(find MCL_PI)/rviz/robot1.rviz" />
+  <arg name="rviz_file2" default="$(find MCL_PI)/rviz/robot2.rviz" />
   <node pkg="rviz" type="rviz" name="rviz_robot1" args="-d $(arg rviz_file1)" output="screen" if="$(arg rviz)"/>
   <node pkg="rviz" type="rviz" name="rviz_robot2" args="-d $(arg rviz_file2)" output="screen" if="$(arg rviz)"/>
   

@@ -47,7 +47,7 @@ class RobotFusion(object):
         poly.polygon.points = []
         x = np.array([max_x, max_x, min_x, min_x])
         y = np.array([max_y, min_y, min_y, max_y])
-        print x, y
+        #print x, y
         for i in range (4):   
             points = Point32()        
             points.x = x[i]
@@ -55,8 +55,6 @@ class RobotFusion(object):
             points.z = 0
             poly.polygon.points.append(points)      
         self.scope_pub.publish(poly)
-
-        #print max_x, min_x, max_y, min_y
 
         mu_s = np.mean(self.PI_s, axis = 0) 
         z = self.scan.scan2cart(mu_s).T*self.scan.map.map.info.resolution
@@ -78,7 +76,7 @@ class RobotFusion(object):
                 cov_t_hat = np.cov(z)  
                 self.send_robot_estimated(self.mu_t_hat)
                 self.send_other_robot_observation(z)
-                print z.shape
+                #print z.shape
 
     def send_robot_estimated(self,mu_hat):
         #self.mu_t_hat point stemp topic /clicked_point

@@ -46,7 +46,7 @@ class ParticleFilter(object):
             self.likelihood_fild()
             self.i_TH = 0.0
             self.ctr = 1
-            if 1/np.sum(self.weights**2) < self.Np/10:
+            if 1/np.sum(self.weights**2) < self.Np/5:
                 self.resampling()
 
         self.ctr += 1
