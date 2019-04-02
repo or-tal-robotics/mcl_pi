@@ -17,25 +17,42 @@ from matplotlib.mlab import bivariate_normal
 
 class ParticleFilter(object):
 
-    def __init__ (self,Np = 100):
-        rospy.Subscriber('/odom', Odometry, self.get_odom) 
-        rospy.Subscriber('/initialpose', PoseWithCovarianceStamped, self.init_pose)
+    def __init__ (self,Np = 200):
+        self.ctr = 1
+        
         self.pub_particlecloud = rospy.Publisher('/particlecloud', PoseArray, queue_size = 60)
         self.pub_particlecloud2fusion = rospy.Publisher('/particlecloud2fuse_out', PoseArray, queue_size = 60)
         self.scan = MapClientLaserScanSubscriber ()
-        self.time_temp = 0.0
+        self.last_time = rospy.Time.now().to_sec()
         self.Np = Np
         self.init()   
         self.i_TH = 0.0     
-        self.dt = 0.0
         self.nbrs = KNN(n_neighbors=1, algorithm='ball_tree').fit(self.scan.obs())
         self.M_idxs = (np.linspace(0,len(self.scan.z.ranges)-1,20)).astype(np.int32)
+        rospy.Subscriber('/odom', Odometry, self.get_odom) 
+        rospy.Subscriber('/initialpose', PoseWithCovarianceStamped, self.init_pose)
+        
         #print self.M_idxs
         #print self.scan.obs()
         #print self.nbrs, "print"
         
     def get_odom(self, msg):  # callback function for odom topic
         self.odom = msg
+        current_time = msg.header.stamp.secs 
+        self.dt = current_time - self.last_time
+        self.last_time = current_time
+        self.prediction()
+        if self.update_TH() > 0.1 and self.ctr%2 == 0:
+            self.likelihood_fild()
+            self.i_TH = 0.0
+            self.ctr = 1
+            if 1/np.sum(self.weights**2) < self.Np/10:
+                self.resampling()
+
+        self.ctr += 1
+
+
+
 
     def init_pose (self,msg): # callback function for /initialpose topic
         X = np.zeros(3)
@@ -64,18 +81,15 @@ class ParticleFilter(object):
         dot[:,1] = self.odom.twist.twist.linear.y
         dot[:,2] =  self.odom.twist.twist.angular.z
 
-        sigma_x = np.sqrt(self.odom.twist.covariance[0])
-        sigma_y = np.sqrt(self.odom.twist.covariance[7])
-        sigma_theta = np.sqrt(self.odom.twist.covariance[35])
+        sigma_x = np.sqrt(self.odom.twist.covariance[0]) + 0.01
+        sigma_y = np.sqrt(self.odom.twist.covariance[7]) + 0.01
+        sigma_theta = np.sqrt(self.odom.twist.covariance[35]) + 0.01
 
         #self.x_pose_cov = self.odom.pose.covariance[0] ############
         #self.y_pose_cov = self.odom.pose.covariance[7] ###########
         #self.theta_pose_cov = self.odom.pose.covariance[35] #########
         
-        current_time = self.odom.header.stamp.secs
         delta = np.zeros((self.Np,3)) 
-
-        self.dt = int(current_time) - int(self.time_temp)
            
         delta[:,2] = dot[:,2] * self.dt + sigma_theta * np.random.randn(self.Np) 
 
@@ -85,13 +99,11 @@ class ParticleFilter(object):
         delta[:,1] = (dot[:,0] + sigma_y * np.random.randn(self.Np)) * self.dt * np.sin(self.particles[:,2]) 
 
         self.particles[:,0] += delta[:,0]
-        self.particles[:,1] += delta[:,1]
-
-        self.time_temp = current_time   
+        self.particles[:,1] += delta[:,1] 
 
     def update_TH(self):
         self.i_TH += (self.odom.twist.twist.linear.x + self.odom.twist.twist.angular.z) * self.dt
-        return self.i_TH
+        return np.abs(self.i_TH)
 
     def likelihood_fild(self):
         print "likelihood"
@@ -111,7 +123,7 @@ class ParticleFilter(object):
                 #print np.abs(ob-z_star[jj,:])
              #   z[jj,:]= ob[np.argmin(np.abs(ob-z_star[jj,:])),:]
             #print z.shape,z_star.shape
-            self.weights[ii] = np.prod(np.exp(-(0.2)* np.linalg.norm(z_star-z,axis=1)**2))
+            self.weights[ii] = self.weights[ii]*np.prod(np.exp(-(0.4)* np.linalg.norm(z_star-z,axis=1)**2))
         self.weights = self.weights / np.sum(self.weights)
 
 
@@ -133,7 +145,7 @@ class ParticleFilter(object):
         self.weights = np.ones (self.Np) / self.Np
         self.particles[:,0] += 0.01 * np.random.randn(self.Np) 
         self.particles[:,1] += 0.01 * np.random.randn(self.Np) 
-        self.particles[:,2] += 0.02 * np.random.randn(self.Np) 
+        self.particles[:,2] += 0.03 * np.random.randn(self.Np) 
 
     def pub (self):
         particle_pose = PoseArray()
@@ -182,14 +194,7 @@ if __name__ == "__main__":
     while not rospy.is_shutdown():
         r.sleep()
 
-        PF_l.prediction()
-        PF_l.likelihood_fild()
-        if np.abs(PF_l.update_TH()) > 0.1:
-            
-            #PF_l.simpel_likelihood()
-            PF_l.resampling()
-            PF_l.i_TH = 0.0
-            print 'Updating particles...'
+       
         PF_l.pub()
         #mean =  np.zeros(3)
         #mean = np.mean(PF_l.particles,axis=0)

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>slam_mcmc</name>
+  <name>MCL_PI</name>
   <version>0.0.0</version>
   <description>The slam_mcmc package</description>
 
