@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node pkg="slam_mcmc" name="laser_scan" type="laser_scan.py" output="screen" >
+    <param name="LaserScan" value="/scan"/>
+  </node>
+</launch>

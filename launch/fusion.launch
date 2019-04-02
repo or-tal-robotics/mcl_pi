@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<launch>
+  <!--MAP SERVER-->
+
+  <!-- gazebo basic pkg -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_robot)/map/map.yaml" />
+
+  <!--GAZEBO -->
+
+  <include file="$(find my_robot)/launch/empty_world.launch" >
+    <arg name="world_name" value="$(find my_robot)/map/map.world"/>
+  </include>
+
+  <!-- send urdf to param server
+       note: there is a not insaid the "robot.urdf.xacro" file -->
+  <arg name="urdf_file" default="$(find xacro)/xacro '$(find my_robot)/urdf/robot.urdf.xacro'" />
+  <param name="robot_description" command="$(arg urdf_file)" />
+
+<group ns="robot1">
+   
+  <param name="tf_prefix" value="robot1" />
+
+<!-- push description to factory and spawn robot in gazebo, part of gazebo basice pkg -->
+  <node name="spawn_robot_1" pkg="gazebo_ros" type="spawn_model" args=" -x 6 -y -1.5 -Y 3.14  -unpause -urdf -model simple_model1 -param /robot_description" respawn="false" output="screen" />
+
+  <node name="MCL1" pkg="slam_mcmc" type="sensor_fusion.py" output="screen">
+  <remap from="/cmd_vel" to="/robot1/cmd_vel"/>
+  <remap from="/odom" to="/robot1/odom"/>
+  <remap from="/particlecloud" to="/robot1/particlecloud"/>
+  <remap from="/scan" to="/robot1/scan"/>
+  <remap from="/estimated_pose" to="/robot1/estimated_pose"/>
+   <remap from="/initialpose" to="/robot1/initialpose"/>
+  <remap from="/transformed_particles" to="/robot1/transformed_particles"/>
+  <remap from="/robot1/static_map" to="/static_map"/>
+  <remap from="/particlecloud2fuse_out" to="/robot1/particlecloud2fuse_out"/>
+  <remap from="/particlecloud2fuse_in" to="/robot2/particlecloud2fuse_out"/>
+  <remap from="/other_robot_observation" to="/robot1/other_robot_observation"/>
+  <remap from="/scope" to="/robot1/scope"/>
+  </node>
+
+  <node name="joy_node" pkg="joy" type="joy_node" output="screen">
+  <remap from="/joy" to="/robot1/joy"/>
+  </node>
+  <node name="joystick_controler" pkg="my_robot" type="joystick_controler_new.py" output="screen">
+  <remap from="/cmd_vel" to="/robot1/cmd_vel"/>
+  <remap from="/joy" to="/robot1/joy"/>
+  </node>
+
+</group>
+
+<group ns="robot2">
+
+  <param name="tf_prefix" value="robot2" />
+
+<!-- push description to factory and spawn robot in gazebo, part of gazebo basice pkg -->
+  <node name="spawn_robot_2" pkg="gazebo_ros" type="spawn_model" args=" -x 0 -y -1.5 -Y 0  -unpause -urdf -model simple_model2 -param /robot_description" respawn="false" output="screen" />
+
+  <node name= "MCL2" pkg="slam_mcmc" type="sensor_fusion.py" output="screen">
+  <remap from="/cmd_vel" to="/robot2/cmd_vel"/>
+  <remap from="/odom" to="/robot2/odom"/>
+  <remap from="/particlecloud" to="/robot2/particlecloud"/>
+  <remap from="/scan" to="/robot2/scan"/>
+  <remap from="/estimated_pose" to="/robot2/estimated_pose"/>
+  <remap from="/transformed_particles" to="/robot2/transformed_particles"/>
+  <remap from="/robot2/static_map" to="/static_map"/>
+  <remap from="/initialpose" to="/robot2/initialpose"/>
+  <remap from="/particlecloud2fuse_out" to="/robot2/particlecloud2fuse_out"/>
+  <remap from="/particlecloud2fuse_in" to="/robot1/particlecloud2fuse_out"/>
+  <remap from="/other_robot_observation" to="/robot2/other_robot_observation"/>
+  <remap from="/scope" to="/robot2/scope"/>
+  </node>
+
+  <!--node name="keyboard" pkg="my_robot" type="keyboard.py" output="screen">
+  <remap from="/cmd_vel" to="/robot2/cmd_vel"/>
+  </node-->
+
+</group>
+
+
+ <arg name="rviz"    default="true" />
+  <arg name="rviz_file1" default="$(find slam_mcmc)/rviz/robot1.rviz" />
+  <arg name="rviz_file2" default="$(find slam_mcmc)/rviz/robot2.rviz" />
+  <node pkg="rviz" type="rviz" name="rviz_robot1" args="-d $(arg rviz_file1)" output="screen" if="$(arg rviz)"/>
+  <node pkg="rviz" type="rviz" name="rviz_robot2" args="-d $(arg rviz_file2)" output="screen" if="$(arg rviz)"/>
+  
+
+</launch>
