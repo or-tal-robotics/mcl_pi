@@ -52,7 +52,7 @@ def main():
         
         PF_l.pub()
         E_x = np.mean(fusion.PI_s,axis=0)
-        if time_now.to_sec() - time_last.to_sec() > 1:
+        if time_now.to_sec() - time_last.to_sec() > 2:
             PF_l.pub2fuse()
             time_last = time_now
 
