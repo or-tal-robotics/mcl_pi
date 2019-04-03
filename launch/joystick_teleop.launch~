@@ -32,8 +32,8 @@
   <remap from="/joy" to="/armadillo/joy"/>
   </node>
   
-  <arg name="rviz_file1" default="$(find MCL_PI)/rviz/robot1.rviz" />
-  <arg name="rviz_file2" default="$(find MCL_PI)/rviz/robot2.rviz" />
+  <arg name="rviz_file1" default="$(find MCL_PI)/temp_slam_indigo/rviz/robot1.rviz" />
+  <arg name="rviz_file2" default="$(find MCL_PI)/temp_slam_indigo/rviz/robot2.rviz" />
   <node pkg="rviz" type="rviz" name="rviz_robot1" args="-d $(arg rviz_file1)" output="screen"/>
   <node pkg="rviz" type="rviz" name="rviz_robot2" args="-d $(arg rviz_file2)" output="screen"/>
   
