@@ -42,7 +42,7 @@
   <arg name="hector_slam" default='false'/>
   <arg name="amcl" default='false'/>
   <arg name="have_map_file" default='true'/>
-  <arg name="map_file" default="$(find tal)/map/map_108.yaml"/>
+  <arg name="map_file" default="$(find MCL_PI)/map/room108.yaml"/>
   <arg name="rqt" default='false'/>
   
   

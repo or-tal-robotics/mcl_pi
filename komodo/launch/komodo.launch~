@@ -186,7 +186,7 @@
   <group if="$(arg controllers)">
     
  
-    <rosparam file="$(find robotican_komodo)/config/controllers.yaml" command="load"/>
+    <rosparam file="$(find MCL_PI)/komodo/config/controllers.yaml" command="load"/>
     
     
     	<group if="$(arg robot_localization)">
