@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <arg name="front_camera" default='false'/>
+  <arg name="top_camera" default='false'/>
+  <arg name="rear_camera" default='true'/> 
+  <arg name="asus_camera" default='true'/>
+  <arg name="softkinetic" default='false'/>
+
+  <arg name="lidar" default='true'/>
+  <arg name="gps" default='false'/>
+  <arg name="urf" default='false'/>
+  <arg name="imu" default='false'/>
+  
+  <arg name="joystick" default='false'/>
+  <arg name="joystick_dev" default='/dev/input/js0'/>
+  
+  <arg name="twist_mux" default='true'/>
+  <arg name="gmapping" default='false'/>
+  
+  <arg name="gazebo" default='false'/>
+  <arg name="world_name" default="worlds/empty.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.0"/>
+  <arg name="R" default="0.0" />
+  <arg name="P" default="0.0" />
+  <arg name="Y" default="0.0" />
+  <arg name="arm" default="false"/>
+  
+     <arg name="paused" default="false"/>
+    <arg name="use_sim_time" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="headless" default="false"/>
+    <arg name="debug" default="false"/> 
+    
+  <arg name="controllers" default='true'/>
+  <arg name="moveit" default='false'/>
+  <arg name="use_depth" default='false'/>
+  <arg name="robot_localization" default='false'/>
+  <arg name="move_base" default='false'/>
+  <arg name="hector_slam" default='false'/>
+  <arg name="amcl" default='false'/>
+  <arg name="have_map_file" default='true'/>
+  <arg name="map_file" default="$(find tal)/map/map_108.yaml"/>
+  <arg name="rqt" default='false'/>
+  
+  
+  
+  
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+  
+  <group if="$(arg twist_mux)" >
+		<include file="$(find robotican_common)/launch/twist_mux.launch">
+		</include>
+  </group>
+  
+  <group if="$(arg joystick)" >
+	<rosparam file="$(find robotican_komodo)/config/joystick_teleop.yaml" command="load"/>
+	<include file="$(find robotican_common)/launch/joystick_teleop.launch">
+	  <arg name="joystick_dev" value="$(arg joystick_dev)"/>
+	 </include>
+	<!-- <node name="pan_tilt_joy_node" pkg="robotican_armadillo" type="pan_tilt_joy_node" output="screen" />
+	 <node name="joy_increment_node" pkg="robotican_armadillo" type="joy_increment_node" output="screen" /> -->
+  </group>
+  
+ 
+  <group if="$(arg gazebo)">
+  	<rosparam file="$(find robotican_komodo)/config/torso_controller_sim.yaml" command="load" />
+  	<rosparam file="$(find robotican_komodo)/config/arm_controller_sim.yaml" command="load" />
+    <env name="GAZEBO_MODEL_PATH" value="$(find robotican_common)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find robotican_komodo)/description/models/komodo_gazebo.xacro' 
+	   controllers:=$(arg controllers)
+	   front_camera:=$(arg front_camera)
+	   rear_camera:=$(arg rear_camera)
+	   top_camera:=$(arg top_camera)
+	   asus_camera:=$(arg asus_camera)
+	   lidar:=$(arg lidar)
+	   urf:=$(arg urf)
+	   imu:=$(arg imu)
+	   gps:=$(arg gps)
+	   softkinetic:=$(arg softkinetic)
+	   " /> 
+	  
+
+    
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+     <arg name="world_name" value="$(arg world_name)"/>
+     <!-- <arg name="world_name" value="$(find robotican_common)/worlds/UPlat.sdf"/> -->
+      <arg name="debug" value="$(arg debug)" />
+      <arg name="gui" value="$(arg gui)" />
+      <arg name="paused" value="$(arg paused)"/>
+      <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+      <arg name="headless" value="$(arg headless)"/>
+    </include>
+    
+
+    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" 
+	  args="-urdf -model komodo -param robot_description -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"/> 
+    
+    
+    </group>
+ 
+    <group unless="$(arg gazebo)">
+		<rosparam file="$(find robotican_komodo)/config/torso_controller.yaml" command="load" />
+		<rosparam file="$(find robotican_komodo)/config/limit_switchs.yaml" command="load" />
+		<rosparam file="$(find robotican_komodo)/config/arm_controller.yaml" command="load" />
+        <param name="robot_description" command="$(find xacro)/xacro.py '$(find robotican_komodo)/description/models/komodo.xacro'" />		
+		
+		<param name="have_close_loop_motor" value="true" />
+		<param name="have_open_loop_motor" value="false" />
+		<param name="have_close_loop_position_motor" value="true" />
+		<param name="have_battery" value="true" />
+		<param name="have_ultrasonic" value="$(arg urf)" />
+		<param name="have_gps" value="$(arg gps)" />
+		<param name="have_arm" value="$(arg arm)" />
+		<param name="have_imu" value="$(arg imu)" />
+		
+		<group if="$(arg front_camera)">
+			<include file="$(find robotican_common)/launch/usb_cam.launch">
+				<arg name="input_dev" value="/dev/video1" />
+				<arg name="camera_frame_id" value="front_cam_link" />
+				<arg name="pixel_format" value="yuyv" /> <!-- mjpeg, yuyv, uyvy  -->
+				<arg name="image_width" value="320" />
+				<arg name="image_height" value="240" />
+				<arg name="node_name" value="front_cam" />
+			</include>
+		</group>
+		<group if="$(arg rear_camera)">
+			<include file="$(find robotican_common)/launch/usb_cam.launch">
+				<arg name="input_dev" value="/dev/video0" />
+				<arg name="camera_frame_id" value="rear_camera_link" />
+				<arg name="pixel_format" value="yuyv" /> <!-- mjpeg, yuyv, uyvy  -->
+				<arg name="image_width" value="320" />
+				<arg name="image_height" value="240" />
+				<arg name="node_name" value="rear_camera" />
+			</include>
+		</group>
+		<group if="$(arg top_camera)">
+			<include file="$(find robotican_common)/launch/usb_cam.launch">
+				<arg name="input_dev" value="/dev/video4" />
+				<arg name="camera_frame_id" value="top_camera_link" />
+				<arg name="pixel_format" value="yuyv" /> <!-- mjpeg, yuyv, uyvy  -->
+				<arg name="image_width" value="320" />
+				<arg name="image_height" value="240" />
+				<arg name="node_name" value="top_camera" />
+			</include>
+		</group>
+		<group if="$(arg asus_camera)">
+			<include file="$(find robotican_common)/launch/openni_cam.launch">
+				<arg name="camera_name" value="torso_camera" />
+			</include>
+		</group>
+		<group if="$(arg lidar)">
+			<include file="$(find robotican_common)/launch/hokuyo_laser.launch">
+				<arg name="input_dev" value="/dev/Hokuyo" />
+				<arg name="frame_id" value="laser_link" />
+				<arg name="min_ang" value="-1.5707" />
+				<arg name="max_ang" value="1.5707" />
+			</include>
+		</group>
+
+		<group if="$(arg softkinetic)">
+		  <include file="$(find robotican_common)/launch/softkinetic_camera_ds325.launch"/>
+		</group>
+			
+<group if="$(arg arm)">
+
+<node name="arm_manager" pkg="robotican_hardware_interface" type="dynamixel_node" respawn="false" output="screen" />
+
+</group>
+		<rosparam file="$(find robotican_komodo)/config/hardware_interface_config.yaml" command="load"/>
+		
+		 <rosparam file="$(find robotican_komodo)/config/arm_config.yaml" command="load"/> 
+				
+		<node name="robotican_hardware_interface" pkg="robotican_hardware_interface" type="robotican_hardware_interface_node" respawn="false" output="screen" >
+		
+		 
+		</node> 
+</group>
+
+
+    
+    
+
+  <group if="$(arg controllers)">
+    
+ 
+    <rosparam file="$(find robotican_komodo)/config/controllers.yaml" command="load"/>
+    
+    
+    	<group if="$(arg robot_localization)">
+		<include file="$(find robotican_common)/launch/robot_localization.launch"/>
+		<param name="/mobile_base_controller/enable_odom_tf" value="false" />
+	</group>
+
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="	  
+      robot_state_controller
+      mobile_base_controller
+      torso_position_controller
+	  " />
+     </group>
+    <group if="$(arg arm)">
+		<node name="arm_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="arm_trajectory_controller gripper_controller" />
+	</group>
+	<group if="$(arg move_base)">
+		<rosparam file="$(find robotican_komodo)/navigation/config/move_base_params.yaml" command="load" ns="move_base"/>
+		<rosparam file="$(find robotican_komodo)/navigation/config/costmap_common_params.yaml" command="load" ns="move_base/global_costmap" />
+		<rosparam file="$(find robotican_komodo)navigation/config/costmap_common_params.yaml" command="load" ns="move_base/local_costmap" />
+		<rosparam file="$(find robotican_komodo)/navigation/config/local_costmap_params.yaml" command="load" ns="move_base/local_costmap" />
+		<rosparam file="$(find robotican_komodo)/navigation/config/global_costmap_params.yaml" command="load" ns="move_base/global_costmap"/>
+		<include file="$(find robotican_komodo)/launch/move_base.launch">
+		 </include>
+	</group>
+
+    <group if="$(arg gmapping)">
+      <include file="$(find robotican_common)/launch/gmapping_slam.launch"/>
+      </group>
+      
+    <group if="$(arg hector_slam)">
+	<include file="$(find robotican_common)/launch/hector_slam.launch"/>
+    </group>
+	
+	<group if="$(arg moveit)">
+		<include file="$(find robotican_komodo_moveit_config)/launch/move_group.launch" >
+		  <!--	<arg name="moveit_depth" value="$(arg use_depth)"/> -->
+		</include>
+	</group>
+
+	
+ <group if="$(arg have_map_file)">
+
+   <!--<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />-->
+</group>
+
+        <group if="$(arg amcl)">
+  <include file="$(find robotican_common)/launch/amcl_diff.launch">
+      <arg name="x" value="$(arg x)"/>
+  <arg name="y" value="$(arg y)"/>
+  <arg name="Y" value="$(arg Y)" />
+</include>
+  </group>
+
+
+
+  
+	<group if="$(arg rqt)">
+		<node pkg="rqt_gui" type="rqt_gui" name="rqt_gui" output="screen" respawn="false">
+      </node>
+	</group>
+	
+	<group unless="$(arg amcl)">
+		<group unless="$(arg hector_slam)">
+			<group unless="$(arg gmapping)">
+			  <!--<node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" args="0 0 0 0 0 0 /map /odom 20" />-->
+			</group>
+		</group>
+	</group>
+</launch>
+
