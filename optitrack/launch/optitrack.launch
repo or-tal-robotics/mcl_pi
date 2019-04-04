@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="server" default="192.168.0.103"/>
+  <node pkg="vrpn_client_ros" type="vrpn_client_node" name="vrpn_client_node" output="screen">
+    <rosparam subst_value="true">
+      server: $(arg server)
+      port: 3883
+      frame_id: world
+      broadcast_tf: true
+      # Must either specify refresh frequency > 0.0, or a list of trackers to create
+      refresh_tracker_frequency: 100.0
+      trackers:
+       - '1'
+       - '2'
+    </rosparam>
+  </node>
+</launch>
