@@ -17,7 +17,7 @@ from matplotlib.mlab import bivariate_normal
 
 class ParticleFilter(object):
 
-    def __init__ (self,Np = 200):
+    def __init__ (self,Np = 100):
         self.ctr = 1
         
         self.pub_particlecloud = rospy.Publisher('/particlecloud', PoseArray, queue_size = 60)
@@ -42,7 +42,7 @@ class ParticleFilter(object):
         self.dt = current_time - self.last_time
         self.last_time = current_time
         self.prediction()
-        if self.update_TH() > 0.1 and self.ctr%2 == 0:
+        if self.update_TH() > 0.1 and self.ctr%1 == 0:
             self.likelihood_fild()
             self.i_TH = 0.0
             self.ctr = 1

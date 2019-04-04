@@ -10,7 +10,7 @@ from particlesintersection import RobotFusion
 from sklearn.neighbors import NearestNeighbors as KNN
 import tf_conversions
 
-particles = np.empty((200,3))
+particles = np.empty((100,3))
 recive_particles = 0
 E_x = np.empty(3)
 
@@ -38,7 +38,7 @@ def main():
     global recive_particles
     rospy.init_node('particle_filter', anonymous = True)
     PF_l = ParticleFilter()
-    PI_t = np.random.randn(200,3)
+    PI_t = np.random.randn(100,3)
     fusion = RobotFusion(PF_l.particles, PI_t)
     particles2fuse_cb = lambda x: particles2fuse(x,PF_l,fusion)
     rospy.Subscriber('/particlecloud2fuse_in', PoseArray, particles2fuse_cb)
@@ -61,7 +61,7 @@ def main():
             fusion.PI_t = particles
             d = np.linalg.norm(np.mean(particles[:,0:2],axis=0) - fusion.mu_t_hat)
             print "d= ", d
-            if d < 0.5:
+            if d < 0.7:
                 PF_l.weights = fusion.update_weight()
                 PF_l.resampling()
             recive_particles = 0
