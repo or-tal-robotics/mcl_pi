@@ -136,6 +136,26 @@ Visualization Manager:
       Topic: /komodo/scope
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Class: rviz/PointStamped
+      Color: 204; 41; 204
+      Enabled: true
+      History Length: 1
+      Name: PointStamped
+      Radius: 0.20000000298023224
+      Topic: /armadillo/Expection
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Class: rviz/PointStamped
+      Color: 204; 41; 204
+      Enabled: true
+      History Length: 1
+      Name: PointStamped
+      Radius: 0.20000000298023224
+      Topic: /armadillo/reference_pose
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -200,5 +220,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 927
-  X: 982
-  Y: 27
+  X: 970
+  Y: 16

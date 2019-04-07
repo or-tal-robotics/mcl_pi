@@ -7,6 +7,7 @@
         <remap from="/reference_pose" to="/armadillo/reference_pose"/>
         <remap from="/particlecloud" to="/armadillo/particlecloud"/>
         <remap from="/Expection" to="/armadillo/Expection"/>
+	<param name="text_file" value="armadillo"/>
     </node>
 
     <node name="mse_calc_komodo" pkg="MCL_PI" type="mse_calc.py" output="screen">
@@ -14,6 +15,7 @@
         <remap from="/reference_pose" to="/komodo/reference_pose"/>
         <remap from="/particlecloud" to="/komodo/particlecloud"/>
         <remap from="/Expection" to="/komodo/Expection"/>
+	<param name="text_file" value="komodo"/>
     </node>
 
 </launch>
