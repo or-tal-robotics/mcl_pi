@@ -178,10 +178,10 @@ class ParticleFilter(object):
         self.pub_estimated_pos.publish(estimated_pose)
         print(self.laser_frame)
         self.laser_tf_br.sendTransform((np.mean(self.particles[:,0]) , np.mean(self.particles[:,1]) , 0),
-  12                      (estimated_pose.pose.pose.orientation.x,estimated_pose.pose.pose.orientation.y,estimated_pose.pose.pose.orientation.z,estimated_pose.pose.pose.orientation.w),
-  13                      rospy.Time.now(),
-  14                      self.laser_frame,
-  15                      "map")
+                            (estimated_pose.pose.pose.orientation.x,estimated_pose.pose.pose.orientation.y,estimated_pose.pose.pose.orientation.z,estimated_pose.pose.pose.orientation.w),
+                            rospy.Time.now(),
+                            self.laser_frame,
+                            "map")
         
     def pub2fuse (self):
         particle_pose = PoseArray()
