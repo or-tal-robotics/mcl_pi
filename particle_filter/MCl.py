@@ -13,7 +13,7 @@ import tf_conversions
 def main():
 
     rospy.init_node('ParticleFilter', anonymous = True)
-    PF_l = ParticleFilter()
+    PF_l = ParticleFilter(Np=200)
     r = rospy.Rate(5)
     
     while not rospy.is_shutdown():
