@@ -28,16 +28,9 @@
 
 </group>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
+
         <node name="MCL_armadilloPF" pkg="MCL_PI" type="MCl.py" output="screen">
-=======
-        <node name="MCL_armadilloPF" pkg="MCL_PI" type="MCL.py" output="screen">
-=======
-        <node name="MCL_armadilloPF" pkg="MCL_PI" type="MCl.py" output="screen">
->>>>>>> 6a88e4e4a1a8e368aae4311f15e8924949ff8362
 	<param name="laser_frame" type="string" value="laser_link" />
->>>>>>> d7ba0c83c4eb1a024ad8b27a0f4c39e61954f5ad
         <!--<remap from="/cmd_vel" to="/armadillo/mobile_base_controller/cmd_vel"/>-->
         <remap from="/odom" to="/armadillo/mobile_base_controller/odom"/>
         <remap from="/scan" to="/armadillo/scan"/>
