@@ -178,7 +178,7 @@ class ParticleFilter(object):
         self.pub_estimated_pos.publish(estimated_pose)
 
         self.laser_tf_br.sendTransform(estimated_pose.pose.pose.position,
-  12                      estimated_pose.pose.pose.orientatio,
+  12                      estimated_pose.pose.pose.orientation,
   13                      rospy.Time.now(),
   14                      self.laser_frame,
   15                      "map")
