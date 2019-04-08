@@ -22,8 +22,8 @@ class Particles(object):
         self.reference = np.empty(2)
         reference_point = msg
         
-        self.reference[0] = -reference_point.pose.position.y- 0.5
-        self.reference[1] = reference_point.pose.position.x-0.2
+        self.reference[0] = -reference_point.pose.position.y - 0.35
+        self.reference[1] = reference_point.pose.position.x - 0.5
 
     def particlecloud(self,msg): # callback function from topic /particlecloud
         global save_arg
