@@ -23,7 +23,7 @@ class ParticleFilter(object):
         self.laser_tf_br = tf.TransformBroadcaster()
         self.laser_frame = rospy.get_param('~laser_frame')
         self.pub_particlecloud = rospy.Publisher('/particlecloud', PoseArray, queue_size = 60)
-        self.pub_estimated_pos = rospy.Publisher('/estimated_pose', PoseWithCovarianceStamped, queue_size = 60)
+        self.pub_estimated_pos = rospy.Publisher('/MCL_estimated_pose', PoseWithCovarianceStamped, queue_size = 60)
         self.pub_particlecloud2fusion = rospy.Publisher('/particlecloud2fuse_out', PoseArray, queue_size = 60)
         self.scan = MapClientLaserScanSubscriber ()
         self.last_time = rospy.Time.now().to_sec()
