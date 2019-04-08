@@ -154,7 +154,7 @@
 		<group if="$(arg lidar)">
 			<include file="$(find robotican_common)/launch/hokuyo_laser.launch">
 				<arg name="input_dev" value="/dev/Hokuyo" />
-				<arg name="frame_id" value="laser_link" />
+				<arg name="frame_id" value="laser_link_komodo" />
 				<arg name="min_ang" value="-1.5707" />
 				<arg name="max_ang" value="1.5707" />
 			</include>

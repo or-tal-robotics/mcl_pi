@@ -2,17 +2,14 @@
 <launch>
 
     <include file="$(find MCL_PI)/komodo/launch/komodo.launch" ns="komodo"/>
-<<<<<<< HEAD
    <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find MCL_PI)/map/room108.yaml" />
-=======
-    <!--<node name="map_server" pkg="map_server" type="map_server" args="$(find tal)/map/map_108.yaml" />-->
->>>>>>> 069d09589220c881e50371f154586938de303e40
 
   <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 world /map 100" />
 
   <node pkg="tf" type="static_transform_publisher" name="map_odom_broadcaster" args="0 0 0 0 0 0 /map /komodo/mobile_base_controller/odom 20" />
 -->
   <node name="MCL1" pkg="MCL_PI" type="MCL_PI.py" output="screen">
+  <param name="laser_frame" type="string" value="laser_link_komodo"/>
   <remap from="/cmd_vel" to="/komodo/mobile_base_controller/cmd_vel"/>
   <remap from="/odom" to="/komodo/mobile_base_controller/odom"/>
   <remap from="/scan" to="/komodo/scan"/>
