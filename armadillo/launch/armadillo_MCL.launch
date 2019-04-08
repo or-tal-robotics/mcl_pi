@@ -28,7 +28,7 @@
 
 </group>
 
-        <node name="MCL_armadilloPF" pkg="MCL_PI" type="MCL.py" output="screen">
+        <node name="MCL_armadilloPF" pkg="MCL_PI" type="MCl.py" output="screen">
         <!--<remap from="/cmd_vel" to="/armadillo/mobile_base_controller/cmd_vel"/>-->
         <remap from="/odom" to="/armadillo/mobile_base_controller/odom"/>
         <remap from="/scan" to="/armadillo/scan"/>
