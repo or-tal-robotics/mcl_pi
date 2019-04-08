@@ -145,9 +145,9 @@ class ParticleFilter(object):
         index = np.random.choice(a = self.Np,size = self.Np,p = self.weights)
         self.particles = self.particles[index]
         self.weights = np.ones (self.Np) / self.Np
-        self.particles[:,0] += 0.01 * np.random.randn(self.Np) 
-        self.particles[:,1] += 0.01 * np.random.randn(self.Np) 
-        self.particles[:,2] += 0.03 * np.random.randn(self.Np) 
+        self.particles[:,0] += 0.0001 * np.random.randn(self.Np) 
+        self.particles[:,1] += 0.0001 * np.random.randn(self.Np) 
+        self.particles[:,2] += 0.0002 * np.random.randn(self.Np) 
 
     def pub (self):
         particle_pose = PoseArray()
