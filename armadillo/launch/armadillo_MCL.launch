@@ -29,6 +29,7 @@
 </group>
 
         <node name="MCL_armadilloPF" pkg="MCL_PI" type="MCL.py" output="screen">
+	<param name="laser_frame" type="string" value="laser_link" />
         <!--<remap from="/cmd_vel" to="/armadillo/mobile_base_controller/cmd_vel"/>-->
         <remap from="/odom" to="/armadillo/mobile_base_controller/odom"/>
         <remap from="/scan" to="/armadillo/scan"/>

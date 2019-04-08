@@ -9,6 +9,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseArray
 from laser_scan_get_map import MapClientLaserScanSubscriber  
 import tf_conversions
+import tf
 from matplotlib import pyplot as plt
 #from skimage.draw import line
 from sklearn.neighbors import NearestNeighbors as KNN
@@ -19,8 +20,10 @@ class ParticleFilter(object):
 
     def __init__ (self,Np = 100):
         self.ctr = 1
-        
+        self.laser_tf_br = tf.TransformBroadcaster()
+        self.laser_frame = rospy.get_param('~laser_frame')
         self.pub_particlecloud = rospy.Publisher('/particlecloud', PoseArray, queue_size = 60)
+        self.pub_estimated_pos = rospy.Publisher('/estimated_pose', PoseWithCovarianceStamped, queue_size = 60)
         self.pub_particlecloud2fusion = rospy.Publisher('/particlecloud2fuse_out', PoseArray, queue_size = 60)
         self.scan = MapClientLaserScanSubscriber ()
         self.last_time = rospy.Time.now().to_sec()
@@ -50,9 +53,6 @@ class ParticleFilter(object):
                 self.resampling()
 
         self.ctr += 1
-
-
-
 
     def init_pose (self,msg): # callback function for /initialpose topic
         X = np.zeros(3)
@@ -152,6 +152,17 @@ class ParticleFilter(object):
         particle_pose.header.frame_id = 'map'
         particle_pose.header.stamp = rospy.Time.now()
         particle_pose.poses = []
+        estimated_pose = PoseWithCovarianceStamped()
+        estimated_pose.header.frame_id = 'map'
+        estimated_pose.header.stamp = rospy.Time.now()
+        estimated_pose.pose.pose.position.x = np.mean(self.particles[:,0])
+        estimated_pose.pose.pose.position.y = np.mean(self.particles[:,1])
+        estimated_pose.pose.pose.position.z = 0.0
+        quaternion = tf_conversions.transformations.quaternion_from_euler(0, 0, np.mean(self.particles[:,2]) )
+        estimated_pose.pose.pose.orientation = geometry_msgs.msg.Quaternion(*quaternion)
+
+        
+
         
         for ii in range(self.Np):
             pose = geometry_msgs.msg.Pose()
@@ -164,6 +175,13 @@ class ParticleFilter(object):
             particle_pose.poses.append(pose)
         
         self.pub_particlecloud.publish(particle_pose)
+        self.pub_estimated_pos.publish(estimated_pose)
+
+        self.laser_tf_br.sendTransform((np.mean(self.particles[:,0]) , np.mean(self.particles[:,1]) , 0),
+  12                      tf.transformations.quaternion_from_euler(0, 0, np.mean(self.particles[:,2])),
+  13                      rospy.Time.now(),
+  14                      self.laser_frame,
+  15                      "map")
         
     def pub2fuse (self):
         particle_pose = PoseArray()
