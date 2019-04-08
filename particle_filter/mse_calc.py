@@ -6,7 +6,7 @@ from geometry_msgs.msg import  PoseStamped, Point, Pose, PointStamped, PoseArray
 import tf_conversions
 import pandas as pd
 
-save_arg = []
+save_arg = [("reference_x", "reference_y", "E_x", "E_y", "Error")]
 
 class Particles(object):
 
@@ -58,7 +58,7 @@ class Particles(object):
         point.point.z = 0
         self.p.publish(point)
 
-        save_arg.append((self.reference,E,self.Error))
+        save_arg.append((self.reference[0], self.reference[1], E[0], E[1], self.Error))
 
 
 def text():
