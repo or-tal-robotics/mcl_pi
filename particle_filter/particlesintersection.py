@@ -9,7 +9,7 @@ from particle_filter import ParticleFilter
 from sklearn.neighbors import NearestNeighbors as KNN
 import tf_conversions
 
-particles = np.empty((100,3))
+particles = np.empty((300,3))
 recive_particles = 0
 
 class RobotFusion(object):
@@ -162,7 +162,7 @@ def main():
     global recive_particles
     rospy.init_node('particle_filter', anonymous = True)
     PF_l = ParticleFilter()
-    PI_t = np.random.randn(100,3)
+    PI_t = np.random.randn(300,3)
     fusion = RobotFusion(PF_l.particles, PI_t)
     particles2fuse_cb = lambda x: particles2fuse(x,PF_l,fusion)
     rospy.Subscriber('/particlecloud2fuse_in', PoseArray, particles2fuse_cb)
