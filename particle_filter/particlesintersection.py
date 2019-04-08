@@ -161,7 +161,7 @@ def main():
     global particles
     global recive_particles
     rospy.init_node('particle_filter', anonymous = True)
-    PF_l = ParticleFilter()
+    PF_l = ParticleFilter(Np=300)
     PI_t = np.random.randn(300,3)
     fusion = RobotFusion(PF_l.particles, PI_t)
     particles2fuse_cb = lambda x: particles2fuse(x,PF_l,fusion)
