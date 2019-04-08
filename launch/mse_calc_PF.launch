@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <node name="mse_calc_armadillo" pkg="MCL_PI" type="mse_calc.py" output="screen">
+        <remap from="/vrpn_client_node/robot_name/pose" to="/vrpn_client_node/armadillo/pose"/>
+        <remap from="/reference_pose" to="/armadillo/reference_pose"/>
+        <remap from="/particlecloud" to="/armadillo_PF/particlecloud"/>
+        <remap from="/Expection" to="/armadillo/Expection"/>
+	<param name="text_file" value="armadillo_PF"/>
+    </node>
+
+    <node name="mse_calc_komodo" pkg="MCL_PI" type="mse_calc.py" output="screen">
+        <remap from="/vrpn_client_node/robot_name/pose" to="/vrpn_client_node/komodo/pose"/>
+        <remap from="/reference_pose" to="/komodo/reference_pose"/>
+        <remap from="/particlecloud" to="/komodo_PF/particlecloud"/>
+        <remap from="/Expection" to="/komodo/Expection"/>
+	<param name="text_file" value="komodo_PF"/>
+    </node>
+
+</launch>
