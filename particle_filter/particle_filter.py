@@ -45,7 +45,7 @@ class ParticleFilter(object):
         self.dt = current_time - self.last_time
         self.last_time = current_time
         self.prediction()
-        if self.update_TH() > 0.05: #and self.ctr%1 == 0:
+        if self.update_TH() > 0.001: #and self.ctr%1 == 0:
             self.likelihood_fild()
             self.i_TH = 0.0
             self.ctr = 1
