@@ -82,9 +82,9 @@ class ParticleFilter(object):
         dot[:,1] = self.odom.twist.twist.linear.y
         dot[:,2] =  self.odom.twist.twist.angular.z
 
-        sigma_x = np.sqrt(self.odom.twist.covariance[0]) + 0.01
-        sigma_y = np.sqrt(self.odom.twist.covariance[7]) + 0.01
-        sigma_theta = np.sqrt(self.odom.twist.covariance[35]) + 0.01
+        sigma_x = np.sqrt(self.odom.twist.covariance[0]) + 0.0001
+        sigma_y = np.sqrt(self.odom.twist.covariance[7]) + 0.0001
+        sigma_theta = np.sqrt(self.odom.twist.covariance[35]) + 0.0001
 
         #self.x_pose_cov = self.odom.pose.covariance[0] ############
         #self.y_pose_cov = self.odom.pose.covariance[7] ###########
