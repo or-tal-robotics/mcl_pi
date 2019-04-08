@@ -123,7 +123,7 @@ class ParticleFilter(object):
                 #print np.abs(ob-z_star[jj,:])
              #   z[jj,:]= ob[np.argmin(np.abs(ob-z_star[jj,:])),:]
             #print z.shape,z_star.shape
-            self.weights[ii] = self.weights[ii]*np.prod(np.exp(-(1.8)* np.linalg.norm(z_star-z,axis=1)**2))
+            self.weights[ii] = self.weights[ii]*np.prod(np.exp(-(1.0)* np.linalg.norm(z_star-z,axis=1)**2))
         self.weights = self.weights / np.sum(self.weights)
 
 
