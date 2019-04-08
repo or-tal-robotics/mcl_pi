@@ -44,7 +44,8 @@ class ParticleFilter(object):
         current_time = msg.header.stamp.secs 
         self.dt = current_time - self.last_time
         self.last_time = current_time
-        self.prediction()
+        if np.abs(self.odom.twist.twist.linear.x)>0.05 or np.abs( self.odom.twist.twist.angular.z)>0.05:
+            self.prediction()
         if self.update_TH() > 0.1: #and self.ctr%1 == 0:
             self.likelihood_fild()
             self.i_TH = 0.0
