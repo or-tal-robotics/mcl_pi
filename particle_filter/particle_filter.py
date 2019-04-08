@@ -178,7 +178,7 @@ class ParticleFilter(object):
         self.pub_estimated_pos.publish(estimated_pose)
 
         self.laser_tf_br.sendTransform((np.mean(self.particles[:,0]) , np.mean(self.particles[:,1]) , 0),
-  12                      tf.transformations.quaternion_from_euler(0, 0, np.mean(self.particles[:,2])),
+  12                      tf_conversions.transformations.quaternion_from_euler(0, 0, np.mean(self.particles[:,2])),
   13                      rospy.Time.now(),
   14                      self.laser_frame,
   15                      "map")
