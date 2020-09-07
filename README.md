@@ -9,3 +9,6 @@ Install the following dependencies:
 * matplotlib
 * sklearn
 * sciPy
+
+## References
+[1] Tslil, Or, Feiner Tal, and Avishy Carmi. "Distributed Information Fusion in Tangle Networks", Under review
